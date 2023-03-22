@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import shlex
 
 
 class HBNBCommand(cmd.Cmd):
@@ -32,7 +33,7 @@ class HBNBCommand(cmd.Cmd):
 
     def preloop(self):
         """Prints if isatty is false"""
-        if not sys.__stdin__.isatty():
+        if not sys._i_stdin__.isatty():
             print('(hbnb)')
 
     def precmd(self, line):
@@ -73,7 +74,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -116,13 +117,31 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, args):
         """ Create an object of any class"""
         if not args:
-            print("** class name missing **")
+            print("* class name missing *")
             return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
+        argument = args.split()l
+        if argument[0] not in HBNBCommand.classes:
+            print("* class doesn't exist *")
             return
-        new_instance = HBNBCommand.classes[args]()
+        elif argument[0] not in HBNBCommand.classes:
+            print("* class doesn't exist *")
+            return
+        new_instance = HBNBCommand.classes[argument[0]]()
+        for item in argument[1:]:
+            key_ = item.split("=")[0]
+            value = item.split("=")[1].replace('_', ' ')
+
+            if value[0] != '\"' and '.' in value:
+                value = float(value)
+            elif value[0] != '\"':
+                value = int(value)
+            else:
+                value = shlex.split(value)[0]
+
+            setattr(new_instance, key_, value)
+        storage.new(new_instance)
         storage.save()
+
         print(new_instance.id)
         storage.save()
 
@@ -187,7 +206,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -319,6 +338,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
