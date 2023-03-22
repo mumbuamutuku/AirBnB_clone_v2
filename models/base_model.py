@@ -41,11 +41,11 @@ class BaseModel:
                     setattr(self, key, value)
                 if key == "id":
                     flag = 0
-             if flag == 1:
-                self.id = str(uuid.uuid4())
+                if flag == 1:
+                    self.id = str(uuid.uuid4())
         else:
             self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.now() 
+            self.created_at = self.updated_at = datetime.now()
 
     def __str__(self):
         """Returns a string representation of the instance"""
@@ -68,7 +68,7 @@ class BaseModel:
             del dictionary["_sa_instance_state"]
         return dictionary
 
-     def delete(self):
+    def delete(self):
         """
         Deletes the current instance from the storage models.storage
         """

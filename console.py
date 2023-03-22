@@ -114,36 +114,41 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
-            print("* class name missing *")
-            return
-        argument = args.split()l
-        if argument[0] not in HBNBCommand.classes:
-            print("* class doesn't exist *")
-            return
-        elif argument[0] not in HBNBCommand.classes:
-            print("* class doesn't exist *")
-            return
-        new_instance = HBNBCommand.classes[argument[0]]()
-        for item in argument[1:]:
-            key_ = item.split("=")[0]
-            value = item.split("=")[1].replace('_', ' ')
-
-            if value[0] != '\"' and '.' in value:
+    def do_create(self, arg):
+        """Create a new instance of a given class"""
+    if not arg:
+        print("** class name missing **")
+        return
+    args = arg.split()
+    if args[0] not in self.classes:
+        print("** class doesn't exist **")
+        return
+    cls = self.classes[args[0]]
+    kwargs = {}
+    for arg in args[1:]:
+        if '=' not in arg:
+            continue
+        key, value = arg.split('=', 1)
+        # Parse the value depending on its format
+        if value.startswith('"') and value.endswith('"'):
+            # String format
+            value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+        elif '.' in value:
+            # Float format
+            try:
                 value = float(value)
-            elif value[0] != '\"':
+            except ValueError:
+                continue
+        else:
+            # Integer format
+            try:
                 value = int(value)
-            else:
-                value = shlex.split(value)[0]
-
-            setattr(new_instance, key_, value)
-        storage.new(new_instance)
-        storage.save()
-
-        print(new_instance.id)
-        storage.save()
+            except ValueError:
+                continue
+        kwargs[key] = value
+    instance = cls(**kwargs)
+    instance.save()
+    print(instance.id)
 
     def help_create(self):
         """ Help information for the create method """
