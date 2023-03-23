@@ -13,7 +13,7 @@ import pep8
 class TestConsole(unittest.TestCase):
     """Test cases for the console.py module"""
 
-    def test_create_with_params(self):
+    def test_params_create(self):
         # Test creating a User instance with parameters
         self.assertFalse(run_command('User.count()'))
         output = run_command('create User name="John_Doe" age=30')
