@@ -21,6 +21,7 @@ app = Flask(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 
+
 @app.route("/", strict_slashes=False)
 def hello_hbnb():
     """ Displays Hello HBNH!"""
@@ -59,10 +60,11 @@ def number_template(n):
     """Display a HTML page only if n is an integer"""
     return render_template("5-number.html", n=n)
 
+
 @app.route("/number_odd_or_even/<int:n>", strict_slashes=False)
 def number_odd_or_even(n):
     """Display HTml page which states old or even"""
-    return render_template(
+    return render_template("6-number_odd_or_even.html", n=n)
 
 
 if __name__ == "__main__":
